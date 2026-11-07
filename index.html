@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Say it backwards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Nunito:wght@700;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sun: #ffd23f;
+    --ink: #1d1a3b;
+    --pink: #ff3b7f;
+    --mint: #35d6a4;
+    --sky: #4cc3ff;
+    --paper: #fffdf5;
+    --display: "Bagel Fat One", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+    --body: "Nunito", "Arial Rounded MT Bold", system-ui, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; }
+  body {
+    background: var(--sun);
+    background-image: radial-gradient(var(--ink) 1.5px, transparent 1.6px);
+    background-size: 28px 28px;
+    background-position: 0 0;
+    color: var(--ink);
+    font-family: var(--body);
+    font-weight: 700;
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px 48px;
+  }
+  main { width: 100%; max-width: 520px; display: grid; gap: 20px; }
+
+h1 {
+font-family: var(–display);
+font-weight: 400;
+font-size: clamp(2.4rem, 9vw, 3.6rem);
+line-height: 1;
+margin: 8px 0 0;
+text-align: center;
+color: var(–paper);
+-webkit-text-stroke: 3px var(–ink);
+paint-order: stroke fill;
+text-shadow: 4px 5px 0 var(–ink);
+letter-spacing: 0.01em;
+}
+
+.card {
+background: var(–paper);
+border: 4px solid var(–ink);
+border-radius: 28px;
+box-shadow: 8px 8px 0 var(–ink);
+padding: 22px 20px;
+}
+
+.prompt { text-align: center; }
+.prompt p { margin: 0; font-size: 1.05rem; }
+#word {
+font-family: var(–display);
+font-size: clamp(2.6rem, 14vw, 4.4rem);
+line-height: 1.1;
+margin: 6px 0 4px;
+word-break: break-all;
+display: inline-block;
+}
+#word.flip { animation: flip 0.6s cubic-bezier(.3,1.6,.5,1); }
+@keyframes flip {
+0% { transform: rotateY(90deg) scale(.6); }
+100% { transform: rotateY(0) scale(1); }
+}
+#word.back { color: var(–pink); }
+
+.stage { display: grid; justify-items: center; gap: 14px; }
+
+#rec {
+width: 210px; height: 210px;
+border-radius: 50%;
+border: 6px solid var(–ink);
+background: var(–pink);
+box-shadow: 0 10px 0 var(–ink);
+cursor: pointer;
+color: var(–paper);
+font-family: var(–display);
+font-size: 2rem;
+display: grid; place-items: center; align-content: center; gap: 8px;
+transition: transform .08s, box-shadow .08s, background .15s;
+-webkit-tap-highlight-color: transparent;
+}
+#rec:hover { transform: translateY(-2px); box-shadow: 0 12px 0 var(–ink); }
+#rec:active { transform: translateY(8px); box-shadow: 0 2px 0 var(–ink); }
+#rec:focus-visible, button:focus-visible { outline: 5px solid var(–sky); outline-offset: 4px; }
+#rec .icon {
+width: 56px; height: 56px; border-radius: 50%;
+background: var(–paper); border: 5px solid var(–ink);
+transition: border-radius .15s;
+}
+#rec.live { background: var(–ink); animation: pulse 1s ease-in-out infinite; }
+#rec.live .icon { border-radius: 12px; background: var(–pink); }
+@keyframes pulse {
+50% { transform: scale(1.05) rotate(-2deg); }
+}
+
+#timer {
+font-family: var(–display);
+font-size: 2.6rem;
+font-variant-numeric: tabular-nums;
+background: var(–ink);
+color: var(–sun);
+border-radius: 16px;
+padding: 2px 20px 0;
+min-width: 6.2ch;
+text-align: center;
+}
+#timer.live { color: var(–pink); }
+
+#status { min-height: 1.4em; margin: 0; text-align: center; font-size: .98rem; }
+#status.err { color: #c4003b; }
+
+.takes { display: grid; gap: 14px; }
+.take {
+display: flex; align-items: center; gap: 14px;
+background: var(–paper);
+border: 4px solid var(–ink);
+border-radius: 22px;
+box-shadow: 6px 6px 0 var(–ink);
+padding: 12px 14px;
+}
+.take.fwd { background: #dff6ff; }
+.take.bwd { background: #ffe0ec; }
+.take .meta { flex: 1; min-width: 0; }
+.take .meta strong { display: block; font-size: 1.1rem; font-weight: 900; }
+.take .meta span { font-size: .95rem; }
+
+button.btn {
+font-family: var(–display);
+font-size: 1.15rem;
+color: var(–ink);
+background: var(–mint);
+border: 4px solid var(–ink);
+border-radius: 999px;
+padding: 10px 20px 8px;
+box-shadow: 0 5px 0 var(–ink);
+cursor: pointer;
+transition: transform .08s, box-shadow .08s;
+}
+button.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 0 var(–ink); }
+button.btn:active { transform: translateY(4px); box-shadow: 0 1px 0 var(–ink); }
+button.btn.alt { background: var(–paper); }
+button.btn.big { font-size: 1.4rem; padding: 14px 26px 11px; }
+button.btn.playing { background: var(–sun); }
+button.btn:disabled { opacity: .45; cursor: not-allowed; }
+
+.row { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+[hidden] { display: none !important; }
+
+@media (prefers-reduced-motion: reduce) {
+#word.flip, #rec.live { animation: none; }
+* { transition: none !important; }
+}
+</style>
+
+</head>
+<body>
+<main>
+  <h1>Say it backwards</h1>
+
+  <section class="card prompt" aria-live="polite">
+    <p id="instruction">Say this word out loud</p>
+    <div id="word">banana</div>
+    <p id="hint"></p>
+  </section>
+
+  <section class="stage">
+    <button id="rec" type="button" aria-label="Record">
+      <span class="icon" aria-hidden="true"></span>
+      <span id="rec-label">Record</span>
+    </button>
+    <div id="timer" aria-label="Recording time">0:00.0</div>
+    <p id="status"></p>
+  </section>
+
+  <section class="takes" id="takes"></section>
+
+  <div class="row" id="actions"></div>
+</main>
+
+<script>
+(() => {
+  const WORDS = ["banana","pizza","wobble","jellyfish","spaghetti","kangaroo","pancake",
+    "umbrella","trombone","avocado","giraffe","marshmallow","pineapple","broccoli",
+    "flamingo","bubblegum","dinosaur","cucumber","hedgehog","tornado"];
+
+  const $ = id => document.getElementById(id);
+  const recBtn = $("rec"), recLabel = $("rec-label"), timerEl = $("timer"),
+        statusEl = $("status"), wordEl = $("word"), instrEl = $("instruction"),
+        hintEl = $("hint"), takesEl = $("takes"), actionsEl = $("actions");
+
+  let word = "", stage = 0;                 // 0 = say the word, 1 = say it backwards, 2 = finished
+  const takes = [null, null];               // {original, reversed, seconds}
+  let ctx = null, stream = null, recorder = null, chunks = [], startedAt = 0, ticker = null;
+  let source = null, playingKey = null, busy = false;
+
+  const reverse = w => [...w].reverse().join("");
+  const fmt = s => {
+    const m = Math.floor(s / 60), r = s - m * 60;
+    return m + ":" + (r < 10 ? "0" : "") + r.toFixed(1);
+  };
+  const say = (msg, err) => { statusEl.textContent = msg; statusEl.classList.toggle("err", !!err); };
+
+  // ---------- audio helpers ----------
+  function getCtx() {
+    if (!ctx) ctx = new (window.AudioContext || window.webkitAudioContext)();
+    if (ctx.state === "suspended") ctx.resume();
+    return ctx;
+  }
+  function decode(blob) {
+    return blob.arrayBuffer().then(ab => new Promise((res, rej) => getCtx().decodeAudioData(ab, res, rej)));
+  }
+  // Cut silence from both ends so the reversed clip starts straight away.
+  function trim(buf) {
+    const chans = [...Array(buf.numberOfChannels).keys()].map(c => buf.getChannelData(c));
+    const loud = i => chans.some(d => Math.abs(d[i]) > 0.02);
+    let a = 0, b = buf.length - 1;
+    while (a < b && !loud(a)) a++;
+    while (b > a && !loud(b)) b--;
+    const pad = Math.floor(buf.sampleRate * 0.05);
+    a = Math.max(0, a - pad); b = Math.min(buf.length - 1, b + pad);
+    const out = getCtx().createBuffer(buf.numberOfChannels, b - a + 1, buf.sampleRate);
+    chans.forEach((d, c) => out.getChannelData(c).set(d.subarray(a, b + 1)));
+    return out;
+  }
+  function flip(buf) {
+    const out = getCtx().createBuffer(buf.numberOfChannels, buf.length, buf.sampleRate);
+    for (let c = 0; c < buf.numberOfChannels; c++) {
+      const src = buf.getChannelData(c), dst = out.getChannelData(c), n = src.length;
+      for (let i = 0; i < n; i++) dst[i] = src[n - 1 - i];
+    }
+    return out;
+  }
+
+  // ---------- playback ----------
+  function stopPlayback() {
+    if (source) { source.onended = null; try { source.stop(); } catch (e) {} source.disconnect(); source = null; }
+    playingKey = null;
+  }
+  // key: "0r" = take 0 reversed, "0o" = take 0 original
+  function togglePlay(key, then) {
+    if (playingKey === key) { stopPlayback(); render(false); return; }
+    stopPlayback();
+    const t = takes[+key[0]];
+    source = getCtx().createBufferSource();
+    source.buffer = key[1] === "r" ? t.reversed : t.original;
+    source.connect(ctx.destination);
+    playingKey = key;
+    source.onended = () => { source = null; playingKey = null; render(false); if (then) then(); };
+    source.start();
+    render(false);
+  }
+  function playBoth() { togglePlay("0r", () => setTimeout(() => togglePlay("1r"), 400)); }
+
+  // ---------- flow ----------
+  function newWord() {
+    stopPlayback();
+    takes[0] = takes[1] = null;
+    let next;
+    do { next = WORDS[Math.floor(Math.random() * WORDS.length)]; } while (next === word);
+    word = next; stage = 0;
+    timerEl.textContent = fmt(0);
+    say("");
+    render(true);
+  }
+
+  function render(flipWord) {
+    const backwards = stage >= 1;
+    const shown = backwards ? reverse(word) : word;
+    wordEl.textContent = shown;
+    wordEl.classList.toggle("back", backwards);
+    if (flipWord) { wordEl.classList.remove("flip"); void wordEl.offsetWidth; wordEl.classList.add("flip"); }
+
+    if (stage === 0) {
+      instrEl.textContent = "Say this word out loud";
+      hintEl.textContent = "You'll hear it played backwards.";
+    } else if (stage === 1) {
+      instrEl.textContent = "Now say it backwards";
+      hintEl.textContent = "Sounds, not letters. “" + word + "” becomes “" + shown + "”. You'll hear it reversed again.";
+    } else {
+      instrEl.textContent = "Both takes reversed";
+      hintEl.textContent = "Take two should sound like “" + word + "” again.";
+    }
+
+    recBtn.hidden = stage === 2; timerEl.hidden = stage === 2;
+    recBtn.disabled = busy;
+    if (stage < 2) recLabel.textContent = recorder ? "Stop" : (takes[stage] ? "Retake" : "Record");
+
+    takesEl.innerHTML = "";
+    takes.forEach((t, i) => {
+      if (!t) return;
+      const card = document.createElement("div");
+      card.className = "take " + (i === 0 ? "fwd" : "bwd");
+      card.innerHTML = '<div class="meta"><strong></strong><span></span></div>';
+      card.querySelector("strong").textContent = i === 0 ? "“" + word + "” played backwards" : "“" + reverse(word) + "” played backwards";
+      card.querySelector("span").textContent = fmt(t.seconds) + " recorded";
+      const mk = (key, label, cls) => {
+        const b = document.createElement("button");
+        b.type = "button";
+        const on = playingKey === key;
+        b.className = "btn " + cls + (on ? " playing" : "");
+        b.textContent = on ? "Stop" : label;
+        b.onclick = () => togglePlay(key);
+        card.appendChild(b);
+      };
+      mk(i + "r", "Play", "");
+      mk(i + "o", "Original", "alt");
+      takesEl.appendChild(card);
+    });
+
+    actionsEl.innerHTML = "";
+    const add = (label, cls, fn) => {
+      const b = document.createElement("button");
+      b.type = "button"; b.className = "btn " + cls; b.textContent = label; b.onclick = fn;
+      actionsEl.appendChild(b);
+    };
+    const idle = !recorder && !busy;
+    if (stage === 0 && takes[0] && idle) add("Now say it backwards", "big", () => { stopPlayback(); stage = 1; timerEl.textContent = fmt(0); say(""); render(true); });
+    if (stage === 0 && !takes[0] && idle) add("Different word", "alt", newWord);
+    if (stage === 1 && takes[1] && idle) add("Finish", "big", () => { stopPlayback(); stage = 2; render(false); });
+    if (stage === 2) {
+      add("Play both", "big", playBoth);
+      add("New word", "alt", newWord);
+    }
+  }
+
+  // ---------- recording ----------
+  async function start() {
+    if (!navigator.mediaDevices || !window.MediaRecorder || !(window.AudioContext || window.webkitAudioContext)) {
+      say("This browser can't record audio. Try a recent Chrome, Edge, Firefox or Safari.", true); return;
+    }
+    getCtx();                               // unlock audio inside the click
+    stopPlayback();
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch (e) {
+      say("Microphone blocked. Allow microphone access in your browser's site settings, then try again.", true);
+      return;
+    }
+    const type = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4", "audio/ogg;codecs=opus"]
+      .find(t => MediaRecorder.isTypeSupported(t));
+    recorder = new MediaRecorder(stream, type ? { mimeType: type } : undefined);
+    chunks = [];
+    recorder.ondataavailable = e => { if (e.data.size) chunks.push(e.data); };
+    recorder.onstop = finish;
+    recorder.start();
+    startedAt = performance.now();
+    ticker = setInterval(() => { timerEl.textContent = fmt((performance.now() - startedAt) / 1000); }, 50);
+    recBtn.classList.add("live"); timerEl.classList.add("live");
+    say(stage === 0 ? "Recording. Say the word, then press Stop." : "Recording. Say it backwards, then press Stop.");
+    render(false);
+  }
+  function stop() { if (recorder && recorder.state !== "inactive") recorder.stop(); }
+
+  async function finish() {
+    clearInterval(ticker);
+    const seconds = (performance.now() - startedAt) / 1000;
+    const blob = new Blob(chunks, { type: recorder.mimeType || "audio/webm" });
+    stream.getTracks().forEach(t => t.stop());
+    recorder = null; stream = null;
+    timerEl.textContent = fmt(seconds);
+    recBtn.classList.remove("live"); timerEl.classList.remove("live");
+    busy = true; say("Reversing…"); render(false);
+    const slot = stage;
+    try {
+      const original = trim(await decode(blob));
+      takes[slot] = { original, reversed: flip(original), seconds };
+      busy = false;
+      say(slot === 0 ? "Here's your word backwards. Press Play to hear it again."
+                     : "Here's your backwards attempt, reversed. Does it sound like the word?");
+      render(false);
+      togglePlay(slot + "r");
+    } catch (e) {
+      busy = false;
+      say("Couldn't read that recording. Try again.", true);
+      render(false);
+    }
+  }
+
+  recBtn.onclick = () => recorder ? stop() : start();
+  newWord();
+})();
+</script>
+
+</body>
+</html>
